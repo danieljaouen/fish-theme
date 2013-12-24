@@ -1,4 +1,105 @@
 # name: danieljaouen
+# __git_prompt_info ------------------------------------------------------- {{{
+function __git_prompt_info
+    # current branch ----------------------------------------------- {{{
+    set --local git_ref (command git symbolic-ref HEAD ^/dev/null)
+    or set --local git_ref (command git rev-parse --short HEAD ^/dev/null)
+    or return
+
+    set --local git_ref (echo $git_ref | sed -e 's,^refs/heads/,,g')
+    # /current branch ---------------------------------------------- }}}
+
+    # dirty -------------------------------------------------------- {{{
+    set --local git_clean_message "nothing to commit (working directory clean)"
+    set --local git_status (git status ^/dev/null | tail -n1)
+    set --local git_index (git status --porcelain -b ^/dev/null)
+    # /dirty ------------------------------------------------------- }}}
+
+    # prefix ------------------------------------------------------- {{{
+    set_color normal
+    set_color --bold green
+    set_color --background black
+    echo -n "["
+    set_color normal
+    set_color --background black
+    echo -n "git: "
+    set_color normal
+    set_color blue
+    set_color --background black
+    # /prefix ------------------------------------------------------ }}}
+
+    # the prompt --------------------------------------------------- {{{
+    echo -n $git_ref
+    if test -n "$git_status"
+        set_color --bold red
+        echo -n "!"
+    end
+    git status --porcelain -b ^/dev/null | grep -E '\?\? ' >/dev/null ^/dev/null
+    if [ -z "$status" ]
+        set_color --bold red
+        echo -n "?"
+    end
+
+    set_color --bold green
+    set_color --background black
+    echo "]"
+    # /the prompt -------------------------------------------------- }}}
+
+    # suffix ------------------------------------------------------- {{{
+    set_color --bold green
+    # /suffix ------------------------------------------------------ }}}
+end
+# /__git_prompt_info ------------------------------------------------------ }}}
+
+# __user ------------------------------------------------------------------ {{{
+function __user
+    set_color --bold red
+    set_color --background black
+    echo -n (whoami)
+end
+# /__user ----------------------------------------------------------------- }}}
+
+function __hostname
+    set_color normal
+    set_color magenta
+    set_color --background black
+    echo -n (hostname -s)
+end
+
+# __collapsed_pwd --------------------------------------------------------- {{{
+function __collapsed_pwd
+    set_color cyan
+    set_color --background black
+    echo -n (pwd | sed -e "s,^$HOME,~,g")
+end
+# /__collapsed_pwd -------------------------------------------------------- }}}
+
+# __prompt_char ----------------------------------------------------------- {{{
+function __prompt_char
+    git branch >/dev/null ^/dev/null; and echo '±'; and return
+    hg root >/dev/null ^/dev/null; and echo '☿'; and return
+    echo '○'
+end
+# /__prompt_char ---------------------------------------------------------- }}}
+
+# __rbenv_info ------------------------------------------------------------ {{{
+function __rbenv_info
+    rbenv local ^/dev/null; or rbenv global ^/dev/null
+end
+# /__rbenv_info ----------------------------------------------------------- }}}
+
+# __pyenv_info ------------------------------------------------------------ {{{
+function __pyenv_info
+    pyenv local ^/dev/null; or pyenv global ^/dev/null
+end
+# /__pyenv_info ----------------------------------------------------------- }}}
+
+# __virtualenv_info ------------------------------------------------------- {{{
+function __virtualenv_info
+    [ $VIRTUAL_ENV ]; and echo '('`basename $VIRTUAL_ENV`') '
+end
+# /__virtualenv_info ------------------------------------------------------ }}}
+
 function fish_prompt
     # colors -------------------------------------------------------------- {{{
     set --local black_foreground (set_color black)
@@ -37,55 +138,6 @@ function fish_prompt
     # /colors ------------------------------------------------------------- }}}
 
     # helper functions ---------------------------------------------------- {{{
-    # __user ------------------------------------------------------- {{{
-    function __user
-        set_color --bold red
-        set_color --background black
-        echo -n (whoami)
-    end
-    # /__user ------------------------------------------------------ }}}
-
-    function __hostname
-        set_color normal
-        set_color magenta
-        set_color --background black
-        echo -n (hostname -s)
-    end
-
-    # __collapsed_pwd ---------------------------------------------- {{{
-    function __collapsed_pwd
-        set_color cyan
-        set_color --background black
-        echo -n (pwd | sed -e "s,^$HOME,~,g")
-    end
-    # /__collapsed_pwd --------------------------------------------- }}}
-
-    # __prompt_char ------------------------------------------------ {{{
-    function __prompt_char
-        git branch >/dev/null ^/dev/null; and echo '±'; and return
-        hg root >/dev/null ^/dev/null; and echo '☿'; and return
-        echo '○'
-    end
-    # /__prompt_char ----------------------------------------------- }}}
-
-    # __rbenv_info ------------------------------------------------- {{{
-    function __rbenv_info
-        rbenv local ^/dev/null; or rbenv global ^/dev/null
-    end
-    # /__rbenv_info ------------------------------------------------ }}}
-
-    # __pyenv_info ------------------------------------------------- {{{
-    function __pyenv_info
-        pyenv local ^/dev/null; or pyenv global ^/dev/null
-    end
-    # /__pyenv_info ------------------------------------------------ }}}
-
-    # __virtualenv_info -------------------------------------------- {{{
-    function __virtualenv_info
-        [ $VIRTUAL_ENV ]; and echo '('`basename $VIRTUAL_ENV`') '
-    end
-    # /__virtualenv_info ------------------------------------------- }}}
-
     # __hg_prompt_info --------------------------------------------- {{{
     function __hg_prompt_info
         set_color normal
@@ -116,74 +168,6 @@ function fish_prompt
     end
     # /__hg_prompt_info -------------------------------------------- }}}
 
-    # __git_prompt_info -------------------------------------------- {{{
-    function __git_prompt_info
-        # current branch --------------------- {{{
-        set --local git_ref (command git symbolic-ref HEAD ^/dev/null)
-        or set --local git_ref (command git rev-parse --short HEAD ^/dev/null)
-        or return
-
-        set --local git_ref (echo $git_ref | sed -e 's,^refs/heads/,,g')
-        # /current branch -------------------- }}}
-
-        # dirty ------------------------------ {{{
-        set --local git_clean_message "nothing to commit (working directory clean)"
-        set --local git_status (git status ^/dev/null | tail -n1)
-        set --local git_index (git status --porcelain -b ^/dev/null)
-        # /dirty ----------------------------- }}}
-
-        # prefix ----------------------------- {{{
-        set_color normal
-        set_color --bold green
-        set_color --background black
-        echo -n "["
-        set_color normal
-        set_color --background black
-        echo -n "git: "
-        set_color normal
-        set_color blue
-        set_color --background black
-        # /prefix ---------------------------- }}}
-
-        # the prompt ------------------------- {{{
-        echo -n $git_ref
-        if test -n "$git_status"
-            set_color --bold red
-            echo -n "!"
-        end
-        if [ (echo "$git_index" | grep -E '\?\? ' >/dev/null ^/dev/null) ]
-            set_color --bold red
-            echo -n "?"
-        end
-
-        set_color --bold green
-        set_color --background black
-        echo "]"
-        # /the prompt ------------------------ }}}
-
-        # suffix ----------------------------- {{{
-        set_color --bold green
-        # /suffix ---------------------------- }}}
-
-        # set --local git_info
-        # if [ (command git rev-parse --is-inside-work-tree ^/dev/null) ]
-        #     # Get the current branch name/commit
-        #     set --local git_branch_name (command git symbolic-ref HEAD ^/dev/null | sed -e 's|^refs/heads/||')
-        #     if [ -z $git_branch_name ]
-        #         set git_branch_name (command git show-ref --head -s --abbrev | head -n1 2> /dev/null)
-        #     end
-
-        #     # Unconditional git component
-        #     set git_info "$normal""on $white$git_branch_name"
-
-        #     if [ (command git status -s --ignore-submodules=dirty | wc -l) -gt 0 ]
-        #         set git_info "$git_info$yellow*"
-        #     end
-
-        #     set git_info "$git_info "
-        # end
-    end
-    # /__git_prompt_info ------------------------------------------- }}}
     # /helper functions --------------------------------------------------- }}}
 
     # _rprint ------------------------------------------------------------- {{{
