@@ -24,7 +24,8 @@ function __git_prompt_info
 
     # the prompt --------------------------------------------------- {{{
     echo -n $git_branch
-    if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit") ]
+    # if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit" | grep -v "untracked files present") ]
+    if [ (command git status --porcelain -b ^/dev/null | grep -E '^\s*M ' ^/dev/null) ]
         set_color --bold red
         echo -n "!"
     end
@@ -46,15 +47,15 @@ end
 
 # __hg_prompt_info -------------------------------------------------------- {{{
 function __hg_prompt_info
-    if [ ! (hg id >/dev/null ^/dev/null) ]
+    if [ ! (hg id ^/dev/null) ]
         return
     end
 
     # current branch ----------------------------------------------- {{{
-    set --local hg_branch (command hg branch)
-    set --local hg_tags (command hg id | cut -d' ' -f2 | sed -e 's|/|, |g')
-    set --local hg_patches_applied (command hg qapplied)
-    set --local hg_patches_unapplied (command hg qunapplied)
+    set --local hg_branch (command hg branch ^/dev/null)
+    set --local hg_tags (command hg id ^/dev/null| cut -d' ' -f2 | sed -e 's|/|, |g')
+    set --local hg_patches_applied (command hg qapplied ^/dev/null)
+    set --local hg_patches_unapplied (command hg qunapplied ^/dev/null)
     # /current branch ---------------------------------------------- }}}
 
     # prefix ------------------------------------------------------- {{{
@@ -71,7 +72,17 @@ function __hg_prompt_info
     set_color normal
     set_color blue
     set_color --background black
-    echo -n "$hg_branch, "
+    echo -n "$hg_branch"
+    if [ (command hg status ^/dev/null | grep -E '^M ') ]
+        set_color --bold red
+        echo -n "!"
+    end
+    if [ (command hg status ^/dev/null | grep -E '^\? ' ^/dev/null) ]
+        set_color --bold red
+        echo -n "?"
+    end
+
+    echo -n ' '
     set_color normal
     set_color magenta
     set_color --background black
