@@ -101,6 +101,8 @@ function __git_prompt_info
     # suffix ------------------------------------------------------- {{{
     set_color --bold green
     # /suffix ------------------------------------------------------ }}}
+
+    echo
 end
 # /__git_prompt_info ------------------------------------------------------ }}}
 
@@ -187,6 +189,7 @@ function __hg_prompt_info
     # /the prompt -------------------------------------------------- }}}
     set_color --bold green
     set_color --background black
+    echo
 end
 # /__hg_prompt_info ------------------------------------------------------- }}}
 
@@ -232,6 +235,7 @@ function __rbenv_info
     set_color --bold green
     set_color --background black
     echo -n ']'
+    echo
 end
 # /__rbenv_info ----------------------------------------------------------- }}}
 
@@ -259,13 +263,10 @@ end
 function fish_prompt
     __first_line
     __git_prompt_info
-    echo
     __hg_prompt_info
-    echo
 
     __pyenv_info
     __rbenv_info
-    echo
 
     __virtualenv_info
     __prompt_char
