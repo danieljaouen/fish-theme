@@ -11,7 +11,7 @@ function __git_prompt_info
 
     # dirty -------------------------------------------------------- {{{
     set --local git_clean_message "nothing to commit (working directory clean)"
-    set --local git_status (git status ^/dev/null | tail -n1)
+    set --local git_status (git status ^/dev/null | tail -n1 | grep -v $git_clean_message)
     set --local git_index (git status --porcelain -b ^/dev/null)
     # /dirty ------------------------------------------------------- }}}
 
@@ -30,12 +30,12 @@ function __git_prompt_info
 
     # the prompt --------------------------------------------------- {{{
     echo -n $git_ref
-    if test -n "$git_status"
+    if test (git status ^/dev/null | tail -n1 | grep -v $git_clean_message)
+        git status ^/dev/null | tail -n1 | grep -v $git_clean_message
         set_color --bold red
         echo -n "!"
     end
-    git status --porcelain -b ^/dev/null | grep -E '\?\? ' >/dev/null ^/dev/null
-    if [ -z "$status" ]
+    if test (git status --porcelain -b ^/dev/null | grep -E '^\?\? ' >/dev/null ^/dev/null)
         set_color --bold red
         echo -n "?"
     end
@@ -51,6 +51,36 @@ function __git_prompt_info
 end
 # /__git_prompt_info ------------------------------------------------------ }}}
 
+# __hg_prompt_info -------------------------------------------------------- {{{
+function __hg_prompt_info
+    set_color normal
+    set_color --bold green
+    set_color --background black
+    echo -n "[hg: "
+    set_color normal
+    set_color blue
+    set_color --background black
+    echo -n "<branch>"
+    set_color normal
+    set_color red
+    set_color --background black
+    echo -n "<status|modified|unknown><update> "
+    set_color normal
+    set_color magenta
+    set_color --background black
+    echo -n "<tags|"
+    set_color normal
+    set_color --bold green
+    set_color --background black
+    echo -n "]"
+    echo
+    echo -n "[hg-patches: "
+    echo "]"
+    set_color --bold green
+    set_color --background black
+end
+# /__hg_prompt_info ------------------------------------------------------- }}}
+
 # __user ------------------------------------------------------------------ {{{
 function __user
     set_color --bold red
@@ -59,12 +89,14 @@ function __user
 end
 # /__user ----------------------------------------------------------------- }}}
 
+# __hostname -------------------------------------------------------------- {{{
 function __hostname
     set_color normal
     set_color magenta
     set_color --background black
     echo -n (hostname -s)
 end
+# /__hostname ------------------------------------------------------------- }}}
 
 # __collapsed_pwd --------------------------------------------------------- {{{
 function __collapsed_pwd
@@ -138,36 +170,6 @@ function fish_prompt
     # /colors ------------------------------------------------------------- }}}
 
     # helper functions ---------------------------------------------------- {{{
-    # __hg_prompt_info --------------------------------------------- {{{
-    function __hg_prompt_info
-        set_color normal
-        set_color --bold green
-        set_color --background black
-        echo -n "[hg: "
-        set_color normal
-        set_color blue
-        set_color --background black
-        echo -n "<branch>"
-        set_color normal
-        set_color red
-        set_color --background black
-        echo -n "<status|modified|unknown><update> "
-        set_color normal
-        set_color magenta
-        set_color --background black
-        echo -n "<tags|"
-        set_color normal
-        set_color --bold green
-        set_color --background black
-        echo -n "]"
-        echo
-        echo -n "[hg-patches: "
-        echo "]"
-        set_color --bold green
-        set_color --background black
-    end
-    # /__hg_prompt_info -------------------------------------------- }}}
-
     # /helper functions --------------------------------------------------- }}}
 
     # _rprint ------------------------------------------------------------- {{{
