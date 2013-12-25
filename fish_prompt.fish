@@ -102,7 +102,7 @@ function __git_prompt_info
     set_color --bold green
     # /suffix ------------------------------------------------------ }}}
 
-    echo
+    echo -n -e '\r\n'
 end
 # /__git_prompt_info ------------------------------------------------------ }}}
 
@@ -158,7 +158,7 @@ function __hg_prompt_info
         return
     end
 
-    echo
+    echo -n -e '\r\n'
     echo -n "["
     set_color normal
     set_color --background black
@@ -188,7 +188,7 @@ function __hg_prompt_info
     echo -n "]"
     # /the prompt -------------------------------------------------- }}}
     set_color --background black
-    echo -n -e '\n'
+    echo -n -e '\r\n'
 end
 # /__hg_prompt_info ------------------------------------------------------- }}}
 
@@ -234,7 +234,7 @@ function __rbenv_info
     set_color --bold green
     set_color --background black
     echo -n ']'
-    echo
+    echo -n -e '\r\n'
 end
 # /__rbenv_info ----------------------------------------------------------- }}}
 
@@ -271,6 +271,5 @@ function fish_prompt
     __prompt_char
     set_color normal
     echo -n ' '
-    return
 end
 # /the prompt ------------------------------------------------------------- }}}
