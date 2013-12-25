@@ -2,11 +2,11 @@
 # __git_prompt_info ------------------------------------------------------- {{{
 function __git_prompt_info
     # current branch ----------------------------------------------- {{{
-    set --local git_ref (command git symbolic-ref HEAD ^/dev/null)
-    or set --local git_ref (command git rev-parse --short HEAD ^/dev/null)
+    set --local git_branch (command git symbolic-ref HEAD ^/dev/null)
+    or set --local git_branch (command git rev-parse --short HEAD ^/dev/null)
     or return
 
-    set --local git_ref (echo $git_ref | sed -e 's,^refs/heads/,,g')
+    set --local git_branch (echo $git_branch | sed -e 's,^refs/heads/,,g')
     # /current branch ---------------------------------------------- }}}
 
     # prefix ------------------------------------------------------- {{{
@@ -23,7 +23,7 @@ function __git_prompt_info
     # /prefix ------------------------------------------------------ }}}
 
     # the prompt --------------------------------------------------- {{{
-    echo -n $git_ref
+    echo -n $git_branch
     if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit") ]
         set_color --bold red
         echo -n "!"
@@ -46,14 +46,29 @@ end
 
 # __hg_prompt_info -------------------------------------------------------- {{{
 function __hg_prompt_info
+    # current branch ----------------------------------------------- {{{
+    set --local hg_branch (command hg branch ^/dev/null)
+    # /current branch ---------------------------------------------- }}}
+
+    if [ ! $hg_branch ]
+        return
+    end
+
+    # prefix ------------------------------------------------------- {{{
     set_color normal
     set_color --bold green
     set_color --background black
-    echo -n "[hg: "
+    echo -n "["
+    set_color normal
+    set_color --background black
+    echo -n "hg: "
+    # /prefix ------------------------------------------------------ }}}
+
+    # the prompt --------------------------------------------------- {{{
     set_color normal
     set_color blue
     set_color --background black
-    echo -n "<branch>"
+    echo -n "$hg_branch"
     set_color normal
     set_color red
     set_color --background black
@@ -67,8 +82,12 @@ function __hg_prompt_info
     set_color --background black
     echo -n "]"
     echo
-    echo -n "[hg-patches: "
+    echo -n "["
+    set_color normal
+    set_color --background black
+    echo -n "hg-patches: "
     echo "]"
+    # /the prompt -------------------------------------------------- }}}
     set_color --bold green
     set_color --background black
 end
