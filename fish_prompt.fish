@@ -46,13 +46,16 @@ end
 
 # __hg_prompt_info -------------------------------------------------------- {{{
 function __hg_prompt_info
-    # current branch ----------------------------------------------- {{{
-    set --local hg_branch (command hg branch ^/dev/null)
-    # /current branch ---------------------------------------------- }}}
-
-    if [ ! $hg_branch ]
+    if [ ! (hg id >/dev/null ^/dev/null) ]
         return
     end
+
+    # current branch ----------------------------------------------- {{{
+    set --local hg_branch (command hg branch)
+    set --local hg_tags (command hg id | cut -d' ' -f2 | sed -e 's|/|, |g')
+    set --local hg_patches_applied (command hg qapplied)
+    set --local hg_patches_unapplied (command hg qunapplied)
+    # /current branch ---------------------------------------------- }}}
 
     # prefix ------------------------------------------------------- {{{
     set_color normal
@@ -68,19 +71,21 @@ function __hg_prompt_info
     set_color normal
     set_color blue
     set_color --background black
-    echo -n "$hg_branch"
-    set_color normal
-    set_color red
-    set_color --background black
-    echo -n "<status|modified|unknown><update> "
+    echo -n "$hg_branch, "
     set_color normal
     set_color magenta
     set_color --background black
-    echo -n "<tags|"
+    echo -n "$hg_tags"
     set_color normal
     set_color --bold green
     set_color --background black
     echo -n "]"
+
+    if [ ! $hg_patches_applied -a $hg_patches_unapplied ]
+        echo
+        return
+    end
+
     echo
     echo -n "["
     set_color normal
@@ -120,9 +125,9 @@ end
 
 # __prompt_char ----------------------------------------------------------- {{{
 function __prompt_char
-    git branch >/dev/null ^/dev/null; and echo '±'; and return
-    hg root >/dev/null ^/dev/null; and echo '☿'; and return
-    echo '○'
+    git branch >/dev/null ^/dev/null; and echo -n '±'; and return
+    hg root >/dev/null ^/dev/null; and echo -n '☿'; and return
+    echo -n '○'
 end
 # /__prompt_char ---------------------------------------------------------- }}}
 
@@ -247,6 +252,10 @@ function fish_prompt
 
     __git_prompt_info
     __hg_prompt_info
+
+    __prompt_char
+    set_color normal
+    echo -n ' '
     return
     # /the prompt --------------------------------------------------------- }}}
 
