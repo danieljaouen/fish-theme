@@ -24,6 +24,41 @@ function __collapsed_pwd
 end
 # /__collapsed_pwd -------------------------------------------------------- }}}
 
+# __first_line ------------------------------------------------------------ {{{
+function __first_line
+    echo
+    set_color normal
+    set_color --bold green
+    set_color --background black
+    echo -n "["
+
+    __user
+
+    set_color --bold green
+    echo -n "@"
+
+    __hostname
+
+    set_color --bold green
+    set_color --background black
+    echo -n "] "
+
+    set_color normal
+    set_color --bold green
+    set_color --background black
+    echo -n "["
+    set_color normal
+    set_color --background black
+    echo -n "pwd: "
+
+    __collapsed_pwd
+
+    set_color --bold green
+    echo -n "]"
+    echo
+end
+# /__first_line ----------------------------------------------------------- }}}
+
 # __git_prompt_info ------------------------------------------------------- {{{
 function __git_prompt_info
     # current branch ----------------------------------------------- {{{
@@ -60,7 +95,7 @@ function __git_prompt_info
 
     set_color --bold green
     set_color --background black
-    echo "]"
+    echo -n "]"
     # /the prompt -------------------------------------------------- }}}
 
     # suffix ------------------------------------------------------- {{{
@@ -118,7 +153,6 @@ function __hg_prompt_info
     echo -n "]"
 
     if [ -z "$hg_patches_applied" -a -z "$hg_patches_unapplied" ]
-        echo
         return
     end
 
@@ -149,7 +183,7 @@ function __hg_prompt_info
 
     set_color normal
     set_color --background black
-    echo "]"
+    echo -n "]"
     # /the prompt -------------------------------------------------- }}}
     set_color --bold green
     set_color --background black
@@ -198,7 +232,6 @@ function __rbenv_info
     set_color --bold green
     set_color --background black
     echo -n ']'
-    echo
 end
 # /__rbenv_info ----------------------------------------------------------- }}}
 
@@ -224,42 +257,15 @@ end
 
 # the prompt -------------------------------------------------------------- {{{
 function fish_prompt
-    echo
-    set_color normal
-    set_color --bold green
-    set_color --background black
-    echo -n "["
-
-    __user
-
-    set_color --bold green
-    echo -n "@"
-
-    __hostname
-
-    set_color --bold green
-    set_color --background black
-    echo -n "] "
-
-    set_color normal
-    set_color --bold green
-    set_color --background black
-    echo -n "["
-    set_color normal
-    set_color --background black
-    echo -n "pwd: "
-
-    __collapsed_pwd
-
-    set_color --bold green
-    echo -n "]"
-    echo
-
+    __first_line
     __git_prompt_info
+    echo
     __hg_prompt_info
+    echo
 
     __pyenv_info
     __rbenv_info
+    echo
 
     __virtualenv_info
     __prompt_char
