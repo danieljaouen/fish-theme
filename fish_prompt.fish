@@ -55,7 +55,8 @@ function __first_line
 
     set_color --bold green
     echo -n "]"
-    echo
+    set_color --background black
+    echo -n -e '\r\n'
 end
 # /__first_line ----------------------------------------------------------- }}}
 
@@ -70,7 +71,6 @@ function __git_prompt_info
     # /current branch ---------------------------------------------- }}}
 
     # prefix ------------------------------------------------------- {{{
-    set_color normal
     set_color --bold green
     set_color --background black
     echo -n "["
@@ -183,13 +183,12 @@ function __hg_prompt_info
         echo -n $hg_patches_unapplied
     end
 
-    set_color normal
+    set_color --bold green
     set_color --background black
     echo -n "]"
     # /the prompt -------------------------------------------------- }}}
-    set_color --bold green
     set_color --background black
-    echo
+    echo -n -e '\n'
 end
 # /__hg_prompt_info ------------------------------------------------------- }}}
 
