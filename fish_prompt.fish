@@ -24,7 +24,7 @@ function __git_prompt_info
 
     # the prompt --------------------------------------------------- {{{
     echo -n $git_ref
-    if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit, working directory clean") ]
+    if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit") ]
         set_color --bold red
         echo -n "!"
     end
