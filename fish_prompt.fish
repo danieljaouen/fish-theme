@@ -9,12 +9,6 @@ function __git_prompt_info
     set --local git_ref (echo $git_ref | sed -e 's,^refs/heads/,,g')
     # /current branch ---------------------------------------------- }}}
 
-    # dirty -------------------------------------------------------- {{{
-    set --local git_clean_message "nothing to commit (working directory clean)"
-    set --local git_status (git status ^/dev/null | tail -n1 | grep -v $git_clean_message)
-    set --local git_index (git status --porcelain -b ^/dev/null)
-    # /dirty ------------------------------------------------------- }}}
-
     # prefix ------------------------------------------------------- {{{
     set_color normal
     set_color --bold green
@@ -30,12 +24,11 @@ function __git_prompt_info
 
     # the prompt --------------------------------------------------- {{{
     echo -n $git_ref
-    if test (git status ^/dev/null | tail -n1 | grep -v $git_clean_message)
-        git status ^/dev/null | tail -n1 | grep -v $git_clean_message
+    if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit, working directory clean") ]
         set_color --bold red
         echo -n "!"
     end
-    if test (git status --porcelain -b ^/dev/null | grep -E '^\?\? ' >/dev/null ^/dev/null)
+    if [ (command git status --porcelain -b ^/dev/null | grep -E '^\?\? ' ^/dev/null) ]
         set_color --bold red
         echo -n "?"
     end
