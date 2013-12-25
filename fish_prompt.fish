@@ -25,14 +25,13 @@ function __git_prompt_info
     # the prompt --------------------------------------------------- {{{
     echo -n $git_branch
     # if [ (command git status ^/dev/null | tail -n1 | grep -v "nothing to commit" | grep -v "untracked files present") ]
-    if [ (command git status --porcelain -b ^/dev/null | grep -E '^\s*M ' ^/dev/null) ]
-        set_color --bold red
-        echo -n "!"
-    end
-    if [ (command git status --porcelain -b ^/dev/null | grep -E '^\?\? ' ^/dev/null) ]
-        set_color --bold red
-        echo -n "?"
-    end
+    git status --porcelain -b ^/dev/null | grep -E '^\s*M ' ^/dev/null
+    and set_color --bold red
+    and echo -n "!"
+
+    git status --porcelain -b ^/dev/null | grep -E '^\?\? ' ^/dev/null
+    and set_color --bold red
+    and echo -n "?"
 
     set_color --bold green
     set_color --background black
@@ -73,15 +72,16 @@ function __hg_prompt_info
     set_color blue
     set_color --background black
     echo -n "$hg_branch"
-    if [ (command hg status ^/dev/null | grep -E '^M ') ]
-        set_color --bold red
-        echo -n "!"
-    end
-    if [ (command hg status ^/dev/null | grep -E '^\? ' ^/dev/null) ]
-        set_color --bold red
-        echo -n "?"
-    end
 
+    hg status ^/dev/null | grep -E '^M ' >/dev/null ^/dev/null
+    and set_color --bold red
+    and echo -n "!"
+
+    hg status ^/dev/null | grep -E '^\? ' >/dev/null ^/dev/null
+    and set_color --bold red
+    and echo -n "?"
+
+    set_color --background black
     echo -n ' '
     set_color normal
     set_color magenta
@@ -92,7 +92,7 @@ function __hg_prompt_info
     set_color --background black
     echo -n "]"
 
-    if [ ! $hg_patches_applied -a $hg_patches_unapplied ]
+    if [ -z "$hg_patches_applied" -a -z "$hg_patches_unapplied" ]
         echo
         return
     end
@@ -102,6 +102,16 @@ function __hg_prompt_info
     set_color normal
     set_color --background black
     echo -n "hg-patches: "
+
+    set --local hg_patches_applied (echo $hg_patches_applied | sed -e "s,\n,,g")
+    set --local hg_patches_unapplied (echo $hg_patches_unapplied | sed -e "s,\n,,g")
+    echo -n $hg_patches_applied
+    if [ -n "$hg_patches_unapplied" ]
+        echo ' '
+        echo -n $hg_patches_unapplied
+    end
+
+
     echo "]"
     # /the prompt -------------------------------------------------- }}}
     set_color --bold green
