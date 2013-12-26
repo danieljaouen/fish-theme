@@ -158,6 +158,7 @@ function __hg_prompt_info
     echo -n "]"
 
     if [ -z "$hg_patches_applied" -a -z "$hg_patches_unapplied" ]
+        printf '\r\n'
         return
     end
 
