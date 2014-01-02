@@ -24,6 +24,17 @@ function __collapsed_pwd
 end
 # /__collapsed_pwd -------------------------------------------------------- }}}
 
+# __time ------------------------------------------------------------------ {{{
+function __time
+    set_color normal
+    set_color --background black
+    echo -n "time: "
+    set_color blue
+    set_color --background black
+    echo -n (date +%H:%M:%S)
+end
+# /time ------------------------------------------------------------------- }}}
+
 # __first_line ------------------------------------------------------------ {{{
 function __first_line
     echo
@@ -54,8 +65,14 @@ function __first_line
     __collapsed_pwd
 
     set_color --bold green
-    echo -n "]"
+    echo -n "] ["
+
+    __time
+
+    set_color --bold green
     set_color --background black
+
+    echo -n "]"
     printf '\r\n'
     # echo -n -e '\r\n'
 end
