@@ -234,13 +234,7 @@ end
 function __pyenv_info
     set --local pyenv_local (pyenv local ^/dev/null)
     set --local pyenv_global (pyenv global ^/dev/null)
-    set_color normal
-    set_color --bold green
-    #set_color --background black
-    echo -n '['
-    set_color normal
-    #set_color --background black
-    echo -n 'python: '
+
     set_color yellow
     #set_color --background black
 
@@ -249,9 +243,6 @@ function __pyenv_info
     else
         echo -n "$pyenv_global"
     end
-    set_color --bold green
-    #set_color --background black
-    echo -n ', '
 end
 # /__pyenv_info ----------------------------------------------------------- }}}
 
@@ -259,9 +250,6 @@ end
 function __rbenv_info
     set --local rbenv_local (rbenv local ^/dev/null)
     set --local rbenv_global (rbenv global ^/dev/null)
-    set_color normal
-    #set_color --background black
-    echo -n 'ruby: '
     set_color yellow
     #set_color --background black
     if [ -n "$rbenv_local" ]
@@ -269,11 +257,6 @@ function __rbenv_info
     else
         echo -n "$rbenv_global"
     end
-    set_color --bold green
-    #set_color --background black
-    echo -n ']'
-    # echo -n -e '\r\n'
-    printf '\r\n'
 end
 # /__rbenv_info ----------------------------------------------------------- }}}
 
@@ -311,6 +294,7 @@ function fish_prompt
     echo -n '| '
 
     __first_line
+
     __git_prompt_info
     __hg_prompt_info
 
@@ -318,8 +302,31 @@ function fish_prompt
     #set_color --background black
     echo -n '| '
 
-    __pyenv_info
+    set_color normal
+    set_color --bold green
+    #set_color --background black
+    echo -n '['
+    set_color normal
+    #set_color --background black
+    echo -n 'python: '
+
+    # __pyenv_info
+
+    set_color --bold green
+    #set_color --background black
+    echo -n ', '
+
+    set_color normal
+    #set_color --background black
+    echo -n 'ruby: '
+
     __rbenv_info
+
+    set_color --bold green
+    #set_color --background black
+    echo -n ']'
+    # echo -n -e '\r\n'
+    printf '\r\n'
 
     set_color red
     #set_color --background black
