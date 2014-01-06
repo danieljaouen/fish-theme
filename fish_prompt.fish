@@ -310,7 +310,7 @@ function fish_prompt
     #set_color --background black
     echo -n 'python: '
 
-    # __pyenv_info
+    __pyenv_info
 
     set_color --bold green
     #set_color --background black
