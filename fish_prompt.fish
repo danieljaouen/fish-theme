@@ -296,7 +296,7 @@ function fish_prompt
     __first_line
 
     __git_prompt_info
-    __hg_prompt_info
+    # __hg_prompt_info
 
     set_color red
     #set_color --background black
